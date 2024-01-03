@@ -27,7 +27,8 @@
       </div>
       <div class="grid grid-cols-1 gap-y-4 gap-x-4 md:grid-cols-4 grid-flow-dense">
         <div
-          v-for="city in iterableCities"
+          v-for="(city, index) in iterableCities"
+          :key="index"
           class="bg-cyan-700 rounded-lg overflow-hidden md:h-80 md:first:col-span-2 md:last:col-span-2 relative grid place-content-center duration-300 cursor-pointer group p-2"
         >
           <img
@@ -125,16 +126,13 @@ async function fetchCityImage(city, country) {
   const url = `https://api.pexels.com/v1/search?query=${query}&per_page=1`;
 
   try {
-    const { data: imageInfo } = await useFetch(url, {
+    const imageInfo = await $fetch(url, {
       headers: {
         Authorization: apiKey,
       },
-      transform: (response) => {
-        return response.photos[0].src.original;
-      },
     });
 
-    return imageInfo.value;
+    return imageInfo.photos[0].src.original;
   } catch (error) {
     console.error(`Error fetching image for ${city}:`, error);
     return null;
@@ -152,7 +150,6 @@ async function fetchAllCityImages() {
     }
   }
   iterableCities.value = cities.value.slice(1);
-  console.log(iterableCities.value);
   loading.value = false;
 }
 fetchAllCityImages();
